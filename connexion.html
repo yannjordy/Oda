@@ -283,7 +283,7 @@ form{
             <form action="">
                 <h1>Login</h1>
                 <div class="input-box">
-                    <input type="text" name="" id="loginUsername" placeholder="Username" required>
+                    <input type="text" id="loginUsername" placeholder="Email" required>
                     <i class="bx bxs-user"></i>
                 </div>
                 <div class="input-box">
@@ -345,13 +345,11 @@ form{
     </div>
 
   <script type="module">
-    // Configuration Supabase
     const SUPABASE_URL = 'https://xjckbqbqxcwzcrlmuvzf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY2ticWJxeGN3emNybG11dnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1MTk1MzMsImV4cCI6MjA3NjA5NTUzM30.AMzAUwtjFt7Rvof5r2enMyYIYToc1wNWWEjvZqK_YXM';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Navigation entre les formulaires
 const container = document.querySelector('.container');
 const registerBtn = document.querySelector('.register-btn');
 const loginBtn = document.querySelector('.login-btn');
@@ -366,7 +364,6 @@ loginBtn.addEventListener('click', (e) => {
     container.classList.remove('active');
 });
 
-// ✅ CORRECTION: Vérifier si l'utilisateur est déjà connecté
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const { data: { session }, error } = await supabase.auth.getSession();
@@ -377,17 +374,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         if (session && session.user) {
-            console.log('✅ Utilisateur déjà connecté, redirection vers tableau.html...');
+            console.log('✅ Utilisateur déjà connecté, redirection...');
             window.location.href = 'tableau.html';
-        } else {
-            console.log('👤 Aucune session active, affichage du formulaire');
         }
     } catch (error) {
         console.error('Erreur:', error);
     }
 });
 
-// Gestion de la connexion
+// CONNEXION
 const loginForm = document.querySelector('.form-box.login form');
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -405,7 +400,6 @@ loginForm.addEventListener('submit', async (e) => {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="bx bx-loader bx-spin"></i> Connexion...';
         
-        // Connexion avec email (username utilisé comme email)
         const { data, error } = await supabase.auth.signInWithPassword({
             email: username,
             password: password
@@ -414,8 +408,6 @@ loginForm.addEventListener('submit', async (e) => {
         if (error) throw error;
         
         console.log('✅ Connexion réussie:', data);
-        
-        // ✅ CORRECTION : Redirection vers tableau.html (pas index.html)
         window.location.href = 'tableau.html';
         
     } catch (error) {
@@ -424,19 +416,12 @@ loginForm.addEventListener('submit', async (e) => {
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Login';
         
-        let errorMessage = 'Erreur de connexion. Veuillez réessayer.';
-        
-        if (error.message.includes('Invalid login credentials')) {
-            errorMessage = 'Nom d\'utilisateur ou mot de passe incorrect';
-        } else if (error.message.includes('Email not confirmed')) {
-            errorMessage = 'Veuillez confirmer votre email avant de vous connecter';
-        }
-        
+        let errorMessage = 'Nom d\'utilisateur ou mot de passe incorrect';
         alert(errorMessage);
     }
 });
 
-// Gestion de l'inscription
+// INSCRIPTION
 const registerForm = document.querySelector('.form-box.register form');
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -451,24 +436,16 @@ registerForm.addEventListener('submit', async (e) => {
         return;
     }
     
-    if (username.length < 2) {
-        alert('Le nom d\'utilisateur doit contenir au moins 2 caractères');
-        return;
-    }
-    
-    if (password.length < 6) {
-        alert('Le mot de passe doit contenir au moins 6 caractères');
-        return;
-    }
-    
     try {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="bx bx-loader bx-spin"></i> Inscription...';
         
+        // Tentative d'inscription
         const { data, error } = await supabase.auth.signUp({
             email: email,
             password: password,
             options: {
+                // Ces données sont envoyées au TRIGGER SQL (NEW.raw_user_meta_data)
                 data: {
                     name: username,
                     display_name: username
@@ -477,37 +454,28 @@ registerForm.addEventListener('submit', async (e) => {
         });
         
         if (error) throw error;
+
+        // Note: Avec votre SQL et la confirmation email désactivée, 
+        // l'utilisateur est soit auto-connecté, soit prêt à l'être.
         
-        console.log('✅ Inscription réussie:', data);
-        
-        alert('Inscription réussie ! Veuillez vérifier votre email pour confirmer votre compte.');
-        
-        // Sauvegarder les informations temporaires
-        sessionStorage.setItem('newUserName', username);
-        sessionStorage.setItem('newUserEmail', email);
-        
-        // Redirection vers tableau.html
+        alert('Inscription réussie ! Redirection...');
         window.location.href = 'tableau.html';
         
     } catch (error) {
-        console.error('Erreur d\'inscription:', error);
-        
+        console.error('Détails erreur inscription:', error);
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Register';
         
-        let errorMessage = 'Erreur d\'inscription. Veuillez réessayer.';
-        
-        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
-            errorMessage = 'Cet email est déjà utilisé';
-        } else if (error.message.includes('Invalid email')) {
-            errorMessage = 'Format d\'email invalide';
+        // Affichage de l'erreur réelle pour le débogage
+        let errorMessage = error.message;
+        if (error.message.includes('already registered')) {
+            errorMessage = 'Cet email est déjà utilisé.';
         }
-        
-        alert(errorMessage);
+        alert("Erreur : " + errorMessage);
     }
 });
 
-// Gestion de la connexion sociale
+// CONNEXION SOCIALE
 async function handleSocialLogin(provider) {
     try {
         const { data, error } = await supabase.auth.signInWithOAuth({
@@ -525,7 +493,6 @@ async function handleSocialLogin(provider) {
     }
 }
 
-// Ajouter les événements pour les icônes sociales
 document.querySelectorAll('.social-icons a').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -548,7 +515,7 @@ document.querySelectorAll('.social-icons a').forEach(link => {
     });
 });
 
-// Gestion du lien "Forgot password"
+// MOT DE PASSE OUBLIÉ
 const forgotLink = document.querySelector('.forgot-link a');
 if (forgotLink) {
     forgotLink.addEventListener('click', async (e) => {
