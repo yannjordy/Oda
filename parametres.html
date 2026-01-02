@@ -1032,6 +1032,29 @@ input:checked + .toggle-slider-small:before {
         font-size: 1.2rem;
     }
 }
+/* Styles pour l'affichage de l'identifiant actuel */
+#identifiantActuel h4 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+#lienBoutique {
+    transition: all 0.3s ease;
+}
+
+#lienBoutique:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.url-preview {
+    padding: 12px 16px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    word-break: break-all;
+}
 /* ==================== MENU NAVIGATION MOBILE (ANDROID STYLE) ==================== */
 
 #menu-mobile-android {
@@ -1140,66 +1163,7 @@ input:checked + .toggle-slider-small:before {
 #menu-mobile-android {
     animation: slideUpMenu 0.3s ease;
 }
-/* Styles pour le partage */
-.share-shop-container {
-    margin-top: 20px;
-    position: relative;
-    display: inline-block;
-}
 
-.btn-share-main {
-    background: var(--primary-color);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.3s ease;
-}
-
-.share-options {
-    display: none; /* Caché par défaut */
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: 10px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    padding: 8px;
-    z-index: 10;
-    min-width: 200px;
-    flex-direction: column;
-    gap: 5px;
-    animation: fadeIn 0.3s ease;
-}
-
-.share-options.active {
-    display: flex;
-}
-
-.share-opt-btn {
-    background: var(--bg-primary);
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    transition: background 0.2s;
-}
-
-.share-opt-btn:hover {
-    background: var(--border-color);
-}
 </style>
 <body>
     <!-- Menu Hamburger Overlay -->
@@ -1255,14 +1219,16 @@ input:checked + .toggle-slider-small:before {
             </a>
         </nav>
         
-        <a href="https://whatsapp.com/channel/0029Vb6mcUm5q08htMMdVA2v" class="hamburger-link">
-            <span class="link-icon">✆</span>
-            <span>Rejoindre notre chaine</span>
-        </a>
-        <a href="https://t.me/+hqymnTrseaU2OWRk" class="hamburger-link">
-            <span class="link-icon">🗩</span>
-            <span>rejoindre notre groupe telegram</span>
-        </a>
+        <div class="hamburger-footer">
+            <button class="hamburger-link">
+                <span class="link-icon">↗️</span>
+                <span>Open Externally</span>
+            </button>
+            <button class="hamburger-link">
+                <span class="link-icon">🔗</span>
+                <span>Partager la page</span>
+            </button>
+        </div>
     </div>
 
     <header class="main-header">
@@ -1377,21 +1343,42 @@ input:checked + .toggle-slider-small:before {
                 </form>
             </section>
 
-            <!-- Section Identifiant Unique -->
             <section id="identifiant" class="settings-section" style="display: none;">
                 <div class="section-header">
                     <h3 class="section-title">Identifiant unique de la boutique</h3>
                     <p class="section-description">Créez un nom unique pour votre boutique (URL personnalisée)</p>
                 </div>
-
+            
                 <div class="alert-info">
                     <span class="alert-icon">ℹ️</span>
                     <div>
                         <strong>À quoi sert l'identifiant unique ?</strong>
-                        <p>Cet identifiant sera utilisé dans l'URL de votre boutique : <strong>boutique.com/@votre-identifiant</strong></p>
+                        <p>Cet identifiant sera utilisé dans l'URL de votre boutique et permettra à vos clients d'accéder directement à votre boutique.</p>
                     </div>
                 </div>
-
+            
+                <!-- Affichage de l'identifiant actuel -->
+                <div id="identifiantActuel" style="display: none; margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(52, 199, 89, 0.05)); border-radius: 12px; border-left: 4px solid #34C759;">
+                    <h4 style="margin-bottom: 12px; color: #34C759; font-weight: 600;">✅ Identifiant actif</h4>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <span style="font-family: monospace; font-size: 1.1rem; font-weight: 600;">@</span>
+                        <span id="identifiantActif" style="font-family: monospace; font-size: 1.1rem; font-weight: 600; color: var(--primary-color);"></span>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <strong>Lien de votre boutique :</strong>
+                        <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px;">
+                            <input type="text" id="lienBoutique" readonly style="flex: 1; padding: 10px; border: 2px solid #E5E7EB; border-radius: 8px; font-family: monospace; background: white;">
+                            <button type="button" onclick="copierLienBoutique()" class="btn-secondary" style="padding: 10px 20px; white-space: nowrap;">
+                                📋 Copier
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="afficherFormulaireModification()" class="btn-secondary" style="background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color);">
+                        ✏️ Modifier l'identifiant
+                    </button>
+                </div>
+            
+                <!-- Formulaire de création/modification -->
                 <form id="identifiantForm">
                     <div class="form-group">
                         <label class="form-label">Identifiant unique (slug)</label>
@@ -1399,33 +1386,19 @@ input:checked + .toggle-slider-small:before {
                             <span class="input-prefix">@</span>
                             <input type="text" class="form-input" id="shopSlug" placeholder="ma-boutique-elegante" pattern="[a-z0-9-]+" maxlength="50">
                         </div>
-                        <small class="form-hint">Uniquement des lettres minuscules, chiffres et tirets</small>
+                        <small class="form-hint">Uniquement des lettres minuscules, chiffres et tirets (minimum 3 caractères)</small>
                         <div id="slugAvailability" class="slug-status"></div>
                     </div>
-
+            
                     <div class="preview-url">
                         <strong>Aperçu de votre URL :</strong>
                         <div class="url-preview">
-                            <span>https://boutique.com/@</span><span id="slugPreview">votre-identifiant</span>
+                            <span id="urlBase"></span><span>?shop=</span><span id="slugPreview">votre-identifiant</span>
                         </div>
                     </div>
-
+            
                     <button type="submit" class="btn-primary">🔖 Définir l'identifiant</button>
                 </form>
-                <div class="share-shop-container">
-                    <button type="button" class="btn-share-main" id="mainShareBtn">
-                        <span class="icon">🔗</span> Partager ma boutique
-                    </button>
-                    
-                    <div class="share-options" id="shareOptions">
-                        <button type="button" class="share-opt-btn" onclick="partagerLien()">
-                            <span class="icon">📤</span> Partager le lien
-                        </button>
-                        <button type="button" class="share-opt-btn" onclick="copierLien()">
-                            <span class="icon">📋</span> Copier le lien
-                        </button>
-                    </div>
-                </div>
             </section>
 
             <!-- Section Paiement -->
@@ -2025,18 +1998,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     await verifierAuthentification();
     initialiserMenuHamburger();
-    //ajouterBoutonDeconnexion();
     await chargerParametres();
     initialiserNavigation();
     initialiserFormulaires();
-    initialiserIdentifiant();
+    initialiserIdentifiant(); // Cette ligne doit être présente
     initialiserPaiement();
     initialiserApparence();
+    initialiserZonesLivraison();
+    initialiserFormulaireLivraison();
+    initialiserMobileMoney();
+    initialiserMenuMobileAndroid();
     ajouterAnimations();
     
     console.log('✅ Initialisation terminée');
 });
-
 // ==================== AUTHENTIFICATION ====================
 async function verifierAuthentification() {
     try {
@@ -2310,56 +2285,7 @@ function mettreAJourMenuActif(boutonActif) {
         inline: 'center'
     });
 }
-// Toggle du menu de partage
-const mainShareBtn = document.getElementById('mainShareBtn');
-const shareOptions = document.getElementById('shareOptions');
 
-if (mainShareBtn) {
-    mainShareBtn.addEventListener('click', () => {
-        shareOptions.classList.toggle('active');
-    });
-}
-
-// Fonction pour copier le lien
-function copierLien() {
-    const slug = document.getElementById('shopSlug').value || 'votre-boutique';
-    const fullUrl = `https://boutique.com/@${slug}`;
-    
-    navigator.clipboard.writeText(fullUrl).then(() => {
-        alert("✅ Lien copié dans le presse-papier !");
-        shareOptions.classList.remove('active');
-    }).catch(err => {
-        console.error('Erreur lors de la copie:', err);
-    });
-}
-
-// Fonction pour partager (Web Share API)
-function partagerLien() {
-    const slug = document.getElementById('shopSlug').value || 'votre-boutique';
-    const shopName = document.getElementById('shopName').value || 'Ma Boutique';
-    const fullUrl = `https://boutique.com/@${slug}`;
-
-    if (navigator.share) {
-        navigator.share({
-            title: shopName,
-            text: `Découvrez ma boutique en ligne : ${shopName}`,
-            url: fullUrl,
-        }).then(() => {
-            console.log('Partage réussi');
-            shareOptions.classList.remove('active');
-        }).catch(console.error);
-    } else {
-        // Fallback si l'API de partage n'est pas dispo
-        copierLien();
-    }
-}
-
-// Fermer le menu si on clique ailleurs
-document.addEventListener('click', (e) => {
-    if (!mainShareBtn.contains(e.target) && !shareOptions.contains(e.target)) {
-        shareOptions.classList.remove('active');
-    }
-});
 
 // ==================== GESTION RESPONSIVE ====================
 function gererResponsiveMenu() {
@@ -2409,6 +2335,101 @@ function initialiserMenuMobileAndroid() {
 
     console.log('✅ Menu mobile Android initialisé');
 }
+// ==================== GÉNÉRATION IDENTIFIANT AUTOMATIQUE ====================
+function genererIdentifiantAuto() {
+    // Générer un identifiant unique commençant par "oda"
+    const timestamp = Date.now().toString(36);
+    const random = Math.random().toString(36).substring(2, 6);
+    return `oda-${timestamp}-${random}`;
+}
+
+async function initialiserIdentifiantUnique() {
+    console.log('🔖 Initialisation de l\'identifiant unique...');
+    
+    // Vérifier si l'utilisateur a déjà un identifiant
+    if (!parametres.identifiant || !parametres.identifiant.slug) {
+        // Générer un identifiant automatique
+        const identifiantAuto = genererIdentifiantAuto();
+        
+        console.log('📝 Génération d\'un identifiant automatique:', identifiantAuto);
+        
+        parametres.identifiant = {
+            slug: identifiantAuto,
+            disponible: true,
+            auto: true, // Marquer comme généré automatiquement
+            dateCreation: new Date().toISOString()
+        };
+        
+        await sauvegarderParametres();
+        afficherNotification('🔖 Identifiant unique généré automatiquement', 'success');
+    }
+    
+    // Afficher l'identifiant actuel
+    afficherIdentifiantActuel();
+}
+
+function afficherIdentifiantActuel() {
+    const identifiantActuelDiv = document.getElementById('identifiantActuel');
+    const identifiantActifSpan = document.getElementById('identifiantActif');
+    const lienBoutiqueInput = document.getElementById('lienBoutique');
+    const formulaire = document.getElementById('identifiantForm');
+    const urlBase = document.getElementById('urlBase');
+    
+    if (parametres.identifiant && parametres.identifiant.slug) {
+        const slug = parametres.identifiant.slug;
+        const lienComplet = `${window.location.origin}/https://oda-navy.vercel.app/e-commerce2.html?shop=${slug}`;
+        
+        if (identifiantActuelDiv) identifiantActuelDiv.style.display = 'block';
+        if (identifiantActifSpan) identifiantActifSpan.textContent = slug;
+        if (lienBoutiqueInput) lienBoutiqueInput.value = lienComplet;
+        if (formulaire) formulaire.style.display = 'none';
+        if (urlBase) urlBase.textContent = `${window.location.origin}/https://oda-navy.vercel.app/e-commerce2.html`;
+        
+        // Mettre à jour le preview dans le formulaire
+        const slugPreview = document.getElementById('slugPreview');
+        if (slugPreview) slugPreview.textContent = slug;
+    } else {
+        if (identifiantActuelDiv) identifiantActuelDiv.style.display = 'none';
+        if (formulaire) formulaire.style.display = 'block';
+        if (urlBase) urlBase.textContent = `${window.location.origin}/https://oda-navy.vercel.app/e-commerce2.html`;
+    }
+}
+
+function afficherFormulaireModification() {
+    const formulaire = document.getElementById('identifiantForm');
+    const shopSlug = document.getElementById('shopSlug');
+    
+    if (formulaire) formulaire.style.display = 'block';
+    
+    // Pré-remplir avec l'identifiant actuel si ce n'est pas un identifiant auto
+    if (parametres.identifiant && parametres.identifiant.slug && !parametres.identifiant.auto) {
+        if (shopSlug) shopSlug.value = parametres.identifiant.slug;
+    }
+    
+    // Scroll vers le formulaire
+    formulaire.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function copierLienBoutique() {
+    const lienBoutiqueInput = document.getElementById('lienBoutique');
+    
+    if (lienBoutiqueInput) {
+        lienBoutiqueInput.select();
+        document.execCommand('copy');
+        
+        afficherNotification('✅ Lien copié dans le presse-papiers !', 'success');
+        
+        // Animation visuelle
+        lienBoutiqueInput.style.background = 'rgba(52, 199, 89, 0.1)';
+        setTimeout(() => {
+            lienBoutiqueInput.style.background = 'white';
+        }, 500);
+    }
+}
+
+// Rendre les fonctions accessibles globalement
+window.afficherFormulaireModification = afficherFormulaireModification;
+window.copierLienBoutique = copierLienBoutique;
 
 // ==================== STYLES ADDITIONNELS ====================
 function ajouterStylesMenuMobile() {
@@ -2774,10 +2795,14 @@ async function chargerParametres() {
             }
         }
         
+        // NOUVEAU : Initialiser l'identifiant automatique si nécessaire
+        await initialiserIdentifiantUnique();
+        
         appliquerParametres();
         
     } catch (error) {
         console.error('❌ Erreur chargement paramètres:', error);
+        await initialiserIdentifiantUnique();
         appliquerParametres();
     }
 }
@@ -3211,8 +3236,14 @@ function initialiserIdentifiant() {
     const slugPreview = document.getElementById('slugPreview');
     const slugAvailability = document.getElementById('slugAvailability');
     const formIdentifiant = document.getElementById('identifiantForm');
+    const urlBase = document.getElementById('urlBase');
     
     let timeoutId;
+
+    // Définir l'URL de base
+    if (urlBase) {
+        urlBase.textContent = `${window.location.origin}/e-commerce2.html`;
+    }
 
     if (slugInput) {
         slugInput.addEventListener('input', (e) => {
@@ -3262,12 +3293,16 @@ function initialiserIdentifiant() {
             
             parametres.identifiant = {
                 slug: slug,
-                disponible: true
+                disponible: true,
+                auto: false, // Marquer comme défini manuellement
+                dateCreation: parametres.identifiant?.dateCreation || new Date().toISOString(),
+                dateModification: new Date().toISOString()
             };
             
             const success = await sauvegarderParametres();
             if (success) {
-                afficherNotification('📖 Identifiant unique enregistré avec succès', 'success');
+                afficherNotification('🔖 Identifiant unique enregistré avec succès', 'success');
+                afficherIdentifiantActuel();
             } else {
                 afficherNotification('⚠️ Sauvegardé localement uniquement', 'warning');
             }
@@ -3276,54 +3311,6 @@ function initialiserIdentifiant() {
     
     console.log('✅ Identifiant initialisé');
 }
-
-async function verifierDisponibiliteSlug(slug) {
-    const slugAvailability = document.getElementById('slugAvailability');
-    
-    if (!slug || slug.length < 3) {
-        if (slugAvailability) slugAvailability.innerHTML = '';
-        return false;
-    }
-    
-    try {
-        if (slugAvailability) {
-            slugAvailability.innerHTML = '<span style="color: #6E6E73;">⏳ Vérification...</span>';
-        }
-        
-        const { data, error } = await supabase
-            .from('parametres_boutique')
-            .select('user_id')
-            .eq('config->>slug', slug)
-            .neq('user_id', currentUser.id)
-            .single();
-
-        if (error && error.code !== 'PGRST116') {
-            console.error('Erreur vérification slug:', error);
-            if (slugAvailability) slugAvailability.innerHTML = '';
-            return false;
-        }
-
-        if (data) {
-            if (slugAvailability) {
-                slugAvailability.className = 'slug-status unavailable';
-                slugAvailability.innerHTML = '❌ Cet identifiant est déjà pris';
-            }
-            return false;
-        } else {
-            if (slugAvailability) {
-                slugAvailability.className = 'slug-status available';
-                slugAvailability.innerHTML = '✓ Cet identifiant est disponible';
-            }
-            return true;
-        }
-    } catch (error) {
-        console.error('Erreur vérification slug:', error);
-        if (slugAvailability) slugAvailability.innerHTML = '';
-        return false;
-    }
-}
-
-console.log('✅ Partie 2/5 du JavaScript Paramètres chargée');
 // ==================== INITIALISATION DES FORMULAIRES ====================
 function initialiserFormulaires() {
     // Formulaire général
@@ -3634,7 +3621,7 @@ window.supprimerCompte = async function() {
         afficherNotification('🗑️ Compte supprimé. Redirection...', 'success');
         
         setTimeout(() => {
-            window.location.href = 'connexion.html';
+            window.location.href = 'index.html';
         }, 2000);
         
     } catch (error) {
